@@ -3,6 +3,13 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/app/_lib/prisma";
 import { Adapter } from "next-auth/adapters";
+
+export interface UserProps {
+  id: string;
+  name: string;
+  email: string;
+}
+
 const handler = NextAuth({
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
@@ -16,7 +23,7 @@ const handler = NextAuth({
       session.user = {
         ...session.user,
         id: user.id,
-      } as any;
+      } as UserProps;
       return session;
     },
   },

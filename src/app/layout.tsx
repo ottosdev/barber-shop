@@ -16,10 +16,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  Session,
 }: Readonly<{
   children: React.ReactNode;
-  Session: any;
 }>) {
   return (
     <html lang="en" className="dark">
