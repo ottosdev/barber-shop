@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/app/_components/ui/card";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { MenuIcon } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetTrigger } from "./ui/sheet";
 import SidebarSheet from "./sidebar-sheet";
 
 export function Header() {
