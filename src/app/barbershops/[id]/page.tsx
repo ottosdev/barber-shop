@@ -1,20 +1,21 @@
-import { db } from "@/app/_lib/prisma";
-import { notFound } from "next/navigation";
-import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
-
-import Image from "next/image";
+import PhoneItem from "@/app/_components/phone-item";
+import ServiceItem from "@/app/_components/service-item";
+import SidebarSheet from "@/app/_components/sidebar-sheet";
 import { Button } from "@/app/_components/ui/button";
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
+import { db } from "@/app/_lib/prisma";
+import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import ServiceItem from "@/app/_components/service-item";
-import PhoneItem from "@/app/_components/phone.item";
-interface BarbershopPage {
+import { notFound } from "next/navigation";
+
+interface BarbershopPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function BarbershopPage({ params }: BarbershopPage) {
+const BarbershopPage = async ({ params }: BarbershopPageProps) => {
+  // chamar o meu banco de dados
   const { id } = await params;
-
   const barbershop = await db.barbershop.findUnique({
     where: {
       id,
@@ -60,7 +61,7 @@ export default async function BarbershopPage({ params }: BarbershopPage) {
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          {/* <SidebarSheet /> */}
+          <SidebarSheet />
         </Sheet>
       </div>
 
@@ -89,26 +90,23 @@ export default async function BarbershopPage({ params }: BarbershopPage) {
         <h2 className="text-xs font-bold uppercase text-gray-400">Serviços</h2>
         <div className="space-y-3">
           {barbershop.services.map((service) => (
-            <>
-              <ServiceItem
-                key={service.id}
-                barbershop={JSON.parse(JSON.stringify(barbershop))}
-                service={JSON.parse(JSON.stringify(service))}
-              />
-            </>
+            <ServiceItem
+              key={service.id}
+              barbershop={JSON.parse(JSON.stringify(barbershop))}
+              service={JSON.parse(JSON.stringify(service))}
+            />
           ))}
         </div>
       </div>
 
       {/* CONTATO */}
       <div className="space-y-3 p-5">
-        <h2 className="text-xs font-bold uppercase text-gray-400">Contato</h2>
         {barbershop.phones.map((phone) => (
-          <>
-            <PhoneItem key={phone} phone={phone} />
-          </>
+          <PhoneItem key={phone} phone={phone} />
         ))}
       </div>
     </div>
   );
-}
+};
+
+export default BarbershopPage;

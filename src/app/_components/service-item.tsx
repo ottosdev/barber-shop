@@ -15,9 +15,14 @@ import { Calendar } from "./ui/calendar";
 import { ptBR } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
 import { isPast, isToday, set } from "date-fns";
+import { createBooking } from "../_actions/create-booking";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "./ui/dialog";
+import SignInDialog from "./sign-in-dialog";
+import BookingSummary from "./booking-summary";
 import { useRouter } from "next/navigation";
+import { getBookings } from "../_actions/get-booking";
 
 interface ServiceItemProps {
   service: BarbershopService;
@@ -76,7 +81,7 @@ const getTimeList = ({ bookings, selectedDay }: GetTimeListProps) => {
 };
 
 const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
-  // const { data } = useSession();
+  const { data } = useSession();
   const router = useRouter();
   const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
@@ -89,11 +94,11 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   useEffect(() => {
     const fetch = async () => {
       if (!selectedDay) return;
-      // const bookings = await getBookings({
-      //   date: selectedDay,
-      //   serviceId: service.id,
-      // });
-      // setDayBookings(bookings);
+      const bookings = await getBookings({
+        date: selectedDay,
+        serviceId: service.id,
+      });
+      setDayBookings(bookings);
     };
     fetch();
   }, [selectedDay, service.id]);
@@ -107,9 +112,9 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   }, [selectedDay, selectedTime]);
 
   const handleBookingClick = () => {
-    // if (data?.user) {
-    //   return setBookingSheetIsOpen(true);
-    // }
+    if (data?.user) {
+      return setBookingSheetIsOpen(true);
+    }
     return setSignInDialogIsOpen(true);
   };
 
@@ -131,10 +136,10 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   const handleCreateBooking = async () => {
     try {
       if (!selectedDate) return;
-      // await createBooking({
-      //   serviceId: service.id,
-      //   date: selectedDate,
-      // });
+      await createBooking({
+        serviceId: service.id,
+        date: selectedDate,
+      });
       handleBookingSheetOpenChange();
       toast.success("Reserva criada com sucesso!", {
         action: {
@@ -257,11 +262,11 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
                   {selectedDate && (
                     <div className="p-5">
-                      {/* <BookingSummary
+                      <BookingSummary
                         barbershop={barbershop}
                         service={service}
                         selectedDate={selectedDate}
-                      /> */}
+                      />
                     </div>
                   )}
                   <SheetFooter className="mt-5 px-5">
@@ -284,7 +289,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
         onOpenChange={(open) => setSignInDialogIsOpen(open)}
       >
         <DialogContent className="w-[90%]">
-          {/* <SignInDialog /> */}
+          <SignInDialog />
         </DialogContent>
       </Dialog>
     </>
